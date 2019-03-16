@@ -339,7 +339,95 @@ function readWordURL(input) {
 }
 
 async function identifyWord() {
-  
+  var image = document.getElementById('wordImage');
+  var canvas = document.createElement('canvas');
+  canvas.height = 28;
+  canvas.width = (canvas.height * image.width) / image.height;
+  var context = canvas.getContext('2d');
+  context.drawImage(image,0,0);
+  var imageData = context.getImageData(0,0,canvas.width,canvas.height);
+  console.log(imageData);
+
+  var imageData2D = new Array(canvas.height);
+  for(let j=0;j<canvas.height;j++) {
+    imageData2D[j] = new Array(canvas.width);
+      for(let i=0;i<canvas.width;i++) {
+      imageData2D[j][i]=imageData.data[(canvas.width * 4 * j ) + (i*4)];
+    }
+  }
+  console.log(imageData2D);
+
+  var left=-1, right=-1, top=canvas.height, bottom=-1, prevSpaces=0, currentSpaces=0;
+  var imageDimensions=[];
+  for(let i=0;i<canvas.width;i++) {
+    let scanLineFlag = 0;
+    for(let j=0;j<canvas.height;j++) {
+      let pixelValue = imageData2D[j][i];
+      //Check for some minimum noise threshold
+      if(pixelValue < 100) {
+        scanLineFlag=1;
+        if(top>j) {
+          top = j;
+        }
+        if(bottom<j) {
+          bottom = j;
+        }
+      }
+    }
+    if(scanLineFlag==1) {
+      //Some character has been detected in the vertical scan line
+      if(left==-1) {
+        left = i;
+      } else {
+        right = i;
+      }
+      if(currentSpaces!=0) {
+        prevSpaces = currentSpaces;
+        currentSpaces = 0;
+      }
+    } else {
+      if(currentSpaces==0) {
+        imageDimensions.push([left,right,top,bottom]);
+        //Reset for next character
+        left=-1;
+        top=canvas.height;
+        right=-1;
+        bottom=-1;
+      }
+      currentSpaces++;
+    }
+  }
+  if(currentSpaces==0) {
+    //Just in case the last character ends on the very last vertical scan line
+    imageDimensions.push([left,right,top,bottom]);
+  }
+  console.log(imageDimensions);
+
+  var wordImageCharactersDiv = document.getElementById('wordImageCharacters');
+  for(let i=0;i<imageDimensions.length;i++) {
+    //Context was originally gotten from the word image, directly used here
+    let x=imageDimensions[i][0];
+    let y=imageDimensions[i][2];
+    let width=imageDimensions[i][1]-imageDimensions[i][0];
+    let height=imageDimensions[i][3]-imageDimensions[i][2];
+    var newImageData = context.getImageData(x,y,width,height);
+    let newCanvas = document.createElement('canvas');
+    newCanvas.width=width;
+    newCanvas.height=height;
+    let newContext = newCanvas.getContext('2d');
+    newContext.putImageData(newImageData,0,0);
+
+    var imageElement = new Image(28,28);
+    imageElement.onload = function() {
+      this.border=1;
+      wordImageCharactersDiv.appendChild(this);
+      var someText = document.createElement('span');
+      someText.innerHTML = "character Value";
+      wordImageCharactersDiv.appendChild(someText);
+      wordImageCharactersDiv.appendChild(document.createElement('br'));
+    }
+    imageElement.src = newCanvas.toDataURL('image/png');
+  }
 }
 
 $("#loadWordImage").change(function(){
