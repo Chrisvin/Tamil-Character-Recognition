@@ -13,6 +13,12 @@
     <!-- Import JQuery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
+    <!-- Import p5.js -->
+    <script src="./p5.js" charset="utf-8"></script>
+
+    <!-- Script for sketching parts -->
+    <script src="./sketch.js" charset="utf-8"></script>
+
     <style>
       canvas{
         border: thin solid grey;
@@ -42,21 +48,19 @@
 
     <!-- Doesn't work perfectly, might need to remove later -->
     <!-- START -->
-    <!-- <br>
+    <br>
     <span id="characterCanvas"></span>
-    <span id="characterCanvasValue" style="font-size:150px;">0</span>
+    <span id="characterCanvasValue" style="font-size:150px;"></span>
     <br>
     <button type="button" name="characterCanvasClear" id="characterCanvasClear" onclick="characterCanvasClear()">Clear the canvas</button>
     <button type="button" name="identifyCharacterCanvas" id="identifyCharacterCanvas" onclick="identifyCharacterCanvas()">Identify the Character</button>
-     -->
     <!-- END -->
 
-<!--
     <br><br>
     <input type="file" name="loadWordImage" id="loadWordImage">
     <br>
     <img src="" id="wordImage" height="100px" />
-    <span id="wordImageValue" style="font-size:150px;"></span> -->
+    <span id="wordImageValue" style="font-size:150px;"></span>
 
     <!-- Actual tensorflow.js code needs to loaded in the end, after body loads -->
     <script src="script.js"></script>

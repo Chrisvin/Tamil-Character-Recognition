@@ -323,25 +323,26 @@ $("#loadImage").change(function(){
     console.log('Loading Character Image...');
     readURL(this);
 });
-//
-// function readWordURL(input) {
-//     if (input.files && input.files[0]) {
-//         var reader = new FileReader();
-//
-//         reader.onload = function (e) {
-//             $('#wordImage').attr('src', e.target.result);
-//             setTimeout(function() {
-//               identifyWord();
-//             }, 1000);
-//         }
-//         reader.readAsDataURL(input.files[0]);
-//     }
-// }
-//
-// async function identifyWord() {
-// }
-//
-// $("#loadWordImage").change(function(){
-//     console.log('Loading Word Image...');
-//     readWordURL(this);
-// });
+
+function readWordURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            $('#wordImage').attr('src', e.target.result);
+            setTimeout(function() {
+              identifyWord();
+            }, 1000);
+        }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+async function identifyWord() {
+  
+}
+
+$("#loadWordImage").change(function(){
+    console.log('Loading Word Image...');
+    readWordURL(this);
+});
