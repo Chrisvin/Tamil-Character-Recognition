@@ -215,9 +215,9 @@ async function trainModel() {
   const fitCallbacks = tfvis.show.fitCallbacks(container, metrics);
 
   return model.fit(trainXs, trainYs, {
-    batchSize: 50,
+    batchSize: 100,
     validationData: [testXs, testYs],
-    epochs: 20,
+    epochs: 10,
     shuffle: true,
     callbacks: fitCallbacks
   });
@@ -338,6 +338,8 @@ function readWordURL(input) {
     }
 }
 
+var wordCharacterCount;
+
 async function identifyWord() {
   var image = document.getElementById('wordImage');
   var canvas = document.createElement('canvas');
@@ -403,6 +405,8 @@ async function identifyWord() {
   }
   console.log(imageDimensions);
 
+  wordCharacterCount = imageDimensions.length;
+  var wordToPrint="";
   var wordImageCharactersDiv = document.getElementById('wordImageCharacters');
   for(let i=0;i<imageDimensions.length;i++) {
     //Context was originally gotten from the word image, directly used here
@@ -419,12 +423,49 @@ async function identifyWord() {
 
     var imageElement = new Image(28,28);
     imageElement.onload = function() {
-      this.border=1;
-      wordImageCharactersDiv.appendChild(this);
-      var someText = document.createElement('span');
-      someText.innerHTML = "character Value";
-      wordImageCharactersDiv.appendChild(someText);
-      wordImageCharactersDiv.appendChild(document.createElement('br'));
+      var canvas = document.createElement('canvas');
+      canvas.width = 28;
+      canvas.height = 28;
+      var context = canvas.getContext('2d');
+      context.drawImage(this,1,1,26,26);
+      var imageData = context.getImageData(0,0,28,28);
+      console.log(imageData);
+
+      var requiredImageData = new Array(28*28);
+      for (let j = 0; j < imageData.data.length / 4; j++) {
+        // All channels hold an equal value since the image is grayscale, so just read the red channel.
+        requiredImageData[j] = imageData.data[j * 4] / 255;
+      }
+      console.log(requiredImageData);
+
+      const [imageDataToIdentify] = tf.tidy(() => {
+        const xs = tf.tensor2d(requiredImageData, [1, 28*28]);
+        console.log(xs);
+        return [
+          xs.reshape([1, 28, 28, 1]),
+        ];
+      });
+      console.log(imageDataToIdentify);
+
+      const preds = model.predict(imageDataToIdentify);
+      preds.data().then(prediction => console.log(prediction));
+
+      const charIndex = model.predict(imageDataToIdentify).argMax(-1);
+      charIndex.data().then(prediction => {
+        console.log(prediction);
+        this.border=1;
+        wordImageCharactersDiv.appendChild(canvas);
+        var someText = document.createElement('span');
+        someText.style="font-size:50px;";
+        someText.innerHTML =tamilCharacters[prediction[0]];
+        wordImageCharactersDiv.appendChild(someText);
+        wordImageCharactersDiv.appendChild(document.createElement('br'));
+        wordToPrint=wordToPrint+tamilCharacters[prediction[0]];
+        wordCharacterCount--;
+        if(wordCharacterCount==0) {
+          document.getElementById('wordImageValue').innerHTML=wordToPrint;
+        }
+      });
     }
     imageElement.src = newCanvas.toDataURL('image/png');
   }
@@ -434,3 +475,13 @@ $("#loadWordImage").change(function(){
     console.log('Loading Word Image...');
     readWordURL(this);
 });
+
+async function saveTensorFlowModel() {
+  const saveResult = await model.save('localstorage://tamilModel');
+  console.log('Model save result : '+saveResult);
+}
+
+async function loadTensorFlowModel() {
+  model = await tf.loadLayersModel('localstorage://tamilModel');
+  console.log('Model loaded successfully...');
+}
