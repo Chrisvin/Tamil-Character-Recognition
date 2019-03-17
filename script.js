@@ -1,6 +1,6 @@
 let model;
 
-var tamilCharacters = ['க','ச','ட','த','ப','ற'];//,'ங','ஞ','ண','ந','ம','ன','ய','ர','ல','வ','ழ','ள'];
+var tamilCharacters = ['க','ச','ட','த','ப','ற','ங','ஞ','ண','ந','ம','ன','ய','ர','ல','வ','ழ','ள'];
 var totalDataSizeForEachChar = 100;
 var totalDataSize = totalDataSizeForEachChar * tamilCharacters.length;
 
@@ -408,6 +408,7 @@ async function identifyWord() {
   wordCharacterCount = imageDimensions.length;
   var wordToPrint="";
   var wordImageCharactersDiv = document.getElementById('wordImageCharacters');
+  wordImageCharactersDiv.innerHTML="";
   for(let i=0;i<imageDimensions.length;i++) {
     //Context was originally gotten from the word image, directly used here
     let x=imageDimensions[i][0];
@@ -477,11 +478,12 @@ $("#loadWordImage").change(function(){
 });
 
 async function saveTensorFlowModel() {
-  const saveResult = await model.save('localstorage://tamilModel');
-  console.log('Model save result : '+saveResult);
+  const saveResult = await model.save('localstorage://my-model-1');
+  console.log('Model saved...');
 }
 
 async function loadTensorFlowModel() {
-  model = await tf.loadLayersModel('localstorage://tamilModel');
+  const modelNew = await tf.loadLayersModel('localstorage://my-model-1');
   console.log('Model loaded successfully...');
+  console.log(modelNew);
 }

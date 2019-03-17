@@ -6,7 +6,7 @@
     <title>Tamil Character Recognition</title>
 
     <!-- Import TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@0.14.2/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@1.0.0/dist/tf.min.js"></script>
     <!-- Import tfjs-vis -->
     <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis@0.4.2/dist/tfjs-vis.umd.min.js"></script>
 
@@ -37,12 +37,11 @@
       Your browser does not support the HTML5 canvas tag.</canvas>
     <br><br>
     <button type="button" name="trainModel" onclick="trainModel()">Train the Model</button>
-    <br><br>
-    <button type="button" name="saveModel" onclick="saveTensorFlowModel()">Save the Model</button>
-    <button type="button" name="loadModel" onclick="loadTensorFlowModel()">Load Saved Model</button>
+    <!-- <br><br> -->
+    <!-- <button type="button" name="saveModel" onclick="saveTensorFlowModel()">Save the Model</button> -->
+    <!-- <button type="button" name="loadModel" onclick="loadTensorFlowModel()">Load Saved Model</button> -->
     <br><br>
     <button type="button" name="evaluate" onclick="evaluateModel()">Evaluate the Accuracy of the Model</button>
-
     <br><br>
     <input type="file" name="loadImage" id="loadImage">
     <br>
@@ -63,7 +62,8 @@
     <input type="file" name="loadWordImage" id="loadWordImage">
     <br>
     <img src="" id="wordImage" height="100px" border="1"/>
-    <span id="wordImageValue" style="font-size:150px;"></span>
+    <br>
+    <span id="wordImageValue" style="font-size:100px;"></span>
     <div id="wordImageCharacters"></div>
 
     <!-- Actual tensorflow.js code needs to loaded in the end, after body loads -->
