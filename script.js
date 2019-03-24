@@ -79,6 +79,13 @@ async function createModel() {
   // higher dimensional data to a final classification output layer.
   model.add(tf.layers.flatten());
 
+  // TESTING PART START
+    model.add(tf.layers.dense({
+      units: 128,
+      activation: 'relu'
+    }));
+  // TESTING PART END
+
   // Our last layer (aka output layer) is a dense layer
   const NUM_OUTPUT_CLASSES = tamilCharacters.length;
   model.add(tf.layers.dense({
@@ -217,7 +224,7 @@ async function trainModel() {
   return model.fit(trainXs, trainYs, {
     batchSize: 100,
     validationData: [testXs, testYs],
-    epochs: 10,
+    epochs: 15,
     shuffle: true,
     callbacks: fitCallbacks
   });
